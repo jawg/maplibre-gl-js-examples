@@ -15,6 +15,8 @@ If you don't have any access token yet, get one on [Jawg Lab](https://jawg.io/la
 
 [add-geometry](./examples/add-geometry.html) : Adding geometry on your map with GeoJSON.
 
+[add-your-data](./examples/add-your-data.html) : Adding geometry from a distant GeoJSON on your map.
+
 [change-language](./examples/change-language.html) : Changing your map's language.
 
 [change-style](./examples/change-style.html) : Changing your map style using our default styles.

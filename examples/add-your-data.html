@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <link
+      href="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token !
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      const map = new mapboxgl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
+        zoom: 10,
+        center: [2.3488, 48.8534],
+        hash: true
+      }).addControl(new mapboxgl.NavigationControl(), "top-right");
+      // This plugin is used for right to left languages
+      mapboxgl.setRTLTextPlugin(
+        "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js"
+      );
+
+      map.on("load", function () {
+        // Add an image to use as a custom marker
+        map.loadImage(
+          "https://media.jawg.io/add-your-data/shop.png",
+          function (error, image) {
+            if (error) throw error;
+            // Add image to map
+            map.addImage("custom-marker", image);
+
+            // Add layer to map, using your geojson as source
+            map.addLayer({
+              id: "trees",
+              type: "symbol",
+              source: {
+                type: "geojson",
+                data: "https://media.jawg.io/add-your-data/marketplaces.geojson"
+              },
+              layout: {
+                "icon-image": "custom-marker"
+              }
+            });
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
