@@ -45,14 +45,15 @@
 
             // Add layer to map, using your geojson as source
             map.addLayer({
-              id: "trees",
+              id: "shops",
               type: "symbol",
               source: {
                 type: "geojson",
                 data: "https://media.jawg.io/add-your-data/marketplaces.geojson"
               },
               layout: {
-                "icon-image": "custom-marker"
+                "icon-image": "custom-marker",
+                "icon-anchor": "bottom"
               }
             });
           }
