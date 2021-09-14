@@ -1,10 +1,10 @@
 <html>
   <head>
     <link
-      href="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.css"
+      href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css"
       rel="stylesheet"
     />
-    <script src="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
     <style>
       body {
         margin: 0;
@@ -22,16 +22,16 @@
     <script>
       // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token !
       const accessToken = "<YOUR_ACCESS_TOKEN>";
-      const map = new mapboxgl.Map({
+      const map = new maplibregl.Map({
         container: "map",
         style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
         zoom: 10,
         center: [2.3488, 48.8534],
         hash: true
-      }).addControl(new mapboxgl.NavigationControl(), "top-right");
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
       // This plugin is used for right to left languages
-      mapboxgl.setRTLTextPlugin(
-        "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js"
+      maplibregl.setRTLTextPlugin(
+        "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js"
       );
 
       map.on("load", function () {

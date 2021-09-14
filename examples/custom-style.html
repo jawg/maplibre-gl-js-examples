@@ -1,7 +1,7 @@
 <html>
 <head>
-  <link href="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
   <style>
     body {
       margin: 0;
@@ -21,14 +21,14 @@
     const accessToken = '<YOUR_ACCESS_TOKEN>';
     // Set your custom style ID. To get your custom style ID see https://www.jawg.io/docs/maps#get-custom-style-id
     const styleId = '<YOUR_CUSTOM_STYLE_ID>';
-    var map = new mapboxgl.Map({
+    var map = new maplibregl.Map({
       container: 'map',
       style: `https://api.jawg.io/styles/${styleId}.json?access-token=${accessToken}`,
       zoom: 13,
       center: [-91.18764, 30.44581],
-    }).addControl(new mapboxgl.NavigationControl(), 'top-right');
+    }).addControl(new maplibregl.NavigationControl(), 'top-right');
     // This plugin is used for right to left languages
-    mapboxgl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
+    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
   </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
-# Integrating Jawg Maps with Mapbox GL JS : Examples
+# Integrating Jawg Maps with MapLibre GL JS : Examples
 
-Welcome to our example repository to integrate Jawg with Mapbox GL JS.
+Welcome to our example repository to integrate Jawg with MapLibre GL JS.
 
 Don't forget to set your access token before openning any example.
 If you don't have any access token yet, get one on [Jawg Lab](https://jawg.io/lab).

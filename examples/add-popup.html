@@ -1,7 +1,7 @@
 <html>
 <head>
-  <link href="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/mapbox-gl@1.11.1/dist/mapbox-gl.js"></script>
+  <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
   <style>
     body {
       margin: 0;
@@ -19,29 +19,29 @@
   <script>
     // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token ! 
     const accessToken = '<YOUR_ACCESS_TOKEN>';
-    const map = new mapboxgl.Map({
+    const map = new maplibregl.Map({
       container: 'map',
       style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
       center: [-61.572646, 16.233131],
       zoom: 9,
-    }).addControl(new mapboxgl.NavigationControl(), 'top-right');
+    }).addControl(new maplibregl.NavigationControl(), 'top-right');
     // This plugin is used for right to left languages
-    mapboxgl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
+    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
 
     // Basic popup definition
-    new mapboxgl.Popup({
+    new maplibregl.Popup({
         closeOnClick: false
       })
       .setLngLat([-61.572646, 16.273131])
       .setHTML('<b>Hello world!</b><br/> I am a popup.')
       .addTo(map);
     // Popup definition before binding it to a marker
-    const markerPopup = new mapboxgl.Popup({
+    const markerPopup = new maplibregl.Popup({
         closeOnClick: true
       })
       .setHTML('<b> A popup that is shown when you click on a marker</b>');
     // Connect the popup to a new marker
-    new mapboxgl.Marker()
+    new maplibregl.Marker()
       .setLngLat([-61.653889, 15.966636])
       .setPopup(markerPopup)
       .addTo(map);
