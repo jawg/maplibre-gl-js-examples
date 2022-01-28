@@ -24,8 +24,8 @@
     const map = new maplibregl.Map({
       container: "map",
       style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
-      zoom: 6,
-      center: [3.978, 46.563],
+      zoom: 5,
+      center: [3.47, 46.0],
       hash: true
     }).addControl(new maplibregl.NavigationControl(), "top-right");
     // This plugin is used for right to left languages
