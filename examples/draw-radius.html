@@ -2,7 +2,6 @@
 <html>
 <head>
   <meta charset=UTF-8>
-  <title>Draw a radius</title>
   <link href="https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@2.1.9/dist/maplibre-gl.js"></script>
   <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
@@ -29,7 +28,7 @@
     const map = new maplibregl.Map({
         container: "map",
         style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
-        zoom: 14,
+        zoom: 13,
         center: center,
         hash: true
       }).addControl(new maplibregl.NavigationControl(), "top-right")
