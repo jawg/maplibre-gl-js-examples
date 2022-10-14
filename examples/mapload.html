@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=UTF-8>
+  <link href='https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css' rel='stylesheet' />
+  <script src='https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js'></script>
+  <script src="https://unpkg.com/@jawg/maplibre-gl-mapload@1.0.0/dist/maplibre-gl-mapload.js"></script>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #map {
+      min-height: 500px;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+    const accessToken = '<YOUR_ACCESS_TOKEN>';
+    // Use Jawg.Map instead of maplibregl.Map. Then use it as a normal maplibregl.Map.
+    const map = new Jawg.Map({
+      container: 'map',
+      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
+      zoom: 2,
+      center: [2.3210938, 48.7965913]
+    }).addControl(new maplibregl.NavigationControl(), 'top-right');
+    // This plugin is used for right to left languages
+    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
+  </script>
+</body>
+</html>
