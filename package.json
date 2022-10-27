@@ -7,7 +7,7 @@
     "js-beautify": "^1.11.0"
   },
   "scripts": {
-    "format": "js-beautify --config .jsbeautifyrc -f examples/* -r"
+    "format": "js-beautify --config .jsbeautifyrc -f examples/*.html -f examples/gis/*.html -r"
   },
   "repository": {
     "type": "git",
