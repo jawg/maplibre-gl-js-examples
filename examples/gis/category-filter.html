@@ -23,30 +23,31 @@
       height: 100%;
     }
 
-    .map-overlay {
+    #menu {
       font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
       position: absolute;
-      width: 200px;
+      width: 175px;
       top: 0;
       left: 0;
       padding: 10px;
-    }
-
-    .map-overlay .map-overlay-inner {
       background-color: #fff;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       border-radius: 3px;
       padding: 10px;
-      margin-bottom: 10px;
+      margin: 10px 10px;
     }
 
-    .map-overlay-inner label {
+    #menu input[type="radio"] {
+      margin: 3px 3px 0px 5px;
+    }
+
+    #menu label {
       display: block;
       font-weight: bold;
       margin: 0 0 5px;
     }
 
-    label {
+    .category-filter {
       text-transform: capitalize;
     }
   </style>
@@ -55,8 +56,7 @@
 <body>
   <div id="map-container">
     <div id="map"></div>
-    <div class="map-overlay">
-      <div id="category-filters" class="map-overlay-inner"></div>
+    <div id="menu">
     </div>
   </div>
   <script>
@@ -90,10 +90,9 @@
       // Create the category filter elements
       // This is the name of the style layer displaying the points as symbols. Find the layer name in the GIS https://www.jawg.io/gis/styles
       const layerName = "paris-places";
-      const categoryFiltersElement = document.getElementById("category-filters");
+      const categoryFiltersElement = document.getElementById("menu");
       Object.entries(categories).forEach(category => {
         const [categoryName, modelIds] = category;
-        const label = document.createElement("label");
         const input = document.createElement("input");
         input.setAttribute("id", categoryName);
         input.setAttribute("type", "radio");
@@ -106,6 +105,8 @@
           ["literal", modelIds]
         ];
         input.onclick = () => map.setFilter(layerName, filterExpr);
+        const label = document.createElement("label");
+        label.setAttribute("class", "category-filter");
         label.appendChild(input);
         label.appendChild(document.createTextNode(categoryName));
         categoryFiltersElement.appendChild(label);
