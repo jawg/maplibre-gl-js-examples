@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset=UTF-8>
   <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
@@ -11,10 +12,15 @@
       padding: 0;
       height: 100%;
     }
+
+    #map-container {
+      height: 100%;
+      position: relative;
+    }
+
     #map {
       min-height: 500px;
       height: 100%;
-      width: 100%;
     }
 
     .map-overlay {
@@ -45,10 +51,13 @@
     }
   </style>
 </head>
+
 <body>
-  <div id="map"></div>
-  <div class="map-overlay top">
-    <div id="category-filters" class="map-overlay-inner"></div>
+  <div id="map-container">
+    <div id="map"></div>
+    <div class="map-overlay">
+      <div id="category-filters" class="map-overlay-inner"></div>
+    </div>
   </div>
   <script>
     (async () => {
@@ -70,12 +79,13 @@
       const metadata = await fetch(`https://api.jawg.io/gis/maps/${mapId}/versions/latest/metadata?access-token=${accessToken}`).then(resp => resp.json());
 
       // Group model ids by category
-      const categories = metadata.datasets.flatMap(dataset => dataset.models).reduce((cat, model) => {
-        const value = model.metadata["category"];
-        if (!value) return cat;
-        (cat[value] = cat[value] || []).push(model.id);
-        return cat;
-      }, {});
+      const categories = metadata.datasets
+        .flatMap(dataset => dataset.models)
+        .filter(model => model.metadata.hasOwnProperty("category"))
+        .reduce((cat, model) => {
+          (cat[model.metadata["category"]] = cat[model.metadata["category"]] || []).push(model.id);
+          return cat;
+        }, {});
 
       // Create the category filter elements
       // This is the name of the style layer displaying the points as symbols. Find the layer name in the GIS https://www.jawg.io/gis/styles
@@ -104,4 +114,5 @@
     })();
   </script>
 </body>
+
 </html>
