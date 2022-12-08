@@ -33,4 +33,4 @@ If you don't have any access token yet, get one on [Jawg Lab](https://jawg.io/la
 
 [add-origin-info](./examples/add-origin-info.html): Customize the request origin to add additional information.
 
-[mapload](./examples/mapload.html): Use [maplibre-gl-mapload](https://github.com/jawg/maplibre-gl-mapload) to support the **per-mapload** pricing.
+[map-session](./examples/map-session.html): Use [@jawg/map-session](https://www.npmjs.com/package/@jawg/map-session) library to support the **per-mapload** pricing.
