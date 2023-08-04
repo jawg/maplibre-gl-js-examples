@@ -1,45 +1,45 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset=UTF-8>
-  <link href='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css' rel='stylesheet' />
-  <script src='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js'></script>
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #map {
-      min-height: 500px;
-      height: 100%;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
-    const accessToken = '<YOUR_ACCESS_TOKEN>';
-    // This is the client identifier. Tile requests origin will appear as "www.acme.com|client1" in the lab statistics tab (https://www.jawg.io/lab/stats)
-    const myClientId = 'client1';
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
-      zoom: 2,
-      center: [2.3210938, 48.7965913],
-      transformRequest: (url, resourceType) => {
-        if (resourceType === 'Tile' && url.startsWith('https://tile.jawg.io')) {
-          return {
-            url: `${url}&origin=${myClientId}` // Add the origin query param with the client id value to the tile URL
-          }
-        }
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
       }
-    }).addControl(new maplibregl.NavigationControl(), 'top-right');
-    // This plugin is used for right to left languages
-    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
-  </script>
-</body>
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      // This is the client identifier. Tile requests origin will appear as "www.acme.com|client1" in the lab statistics tab (https://www.jawg.io/lab/stats)
+      const myClientId = "client1";
+      const map = new maplibregl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
+        zoom: 2,
+        center: [2.3210938, 48.7965913],
+        transformRequest: (url, resourceType) => {
+          if (resourceType === "Tile" && url.startsWith("https://tile.jawg.io")) {
+            return {
+              url: `${url}&origin=${myClientId}`, // Add the origin query param with the client id value to the tile URL
+            };
+          }
+        },
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+    </script>
+  </body>
 </html>

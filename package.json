@@ -2,12 +2,11 @@
   "name": "maplibre-gl-js-examples",
   "version": "0.0.0",
   "description": "Integrating Jawg Maps with MapLibre GL JS",
-  "dependencies": {},
   "devDependencies": {
-    "js-beautify": "^1.14.7"
+    "prettier": "^3.0.1"
   },
   "scripts": {
-    "format": "js-beautify --config .jsbeautifyrc -f examples/*.html -f examples/gis/*.html -r"
+    "format": "find examples -name '*.html' -exec prettier --config .prettierrc -w --parser html {} \\;"
   },
   "repository": {
     "type": "git",

@@ -1,147 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset=UTF-8>
-  <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #map {
-      min-height: 500px;
-      height: 100%;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token! 
-    const accessToken = "<YOUR_ACCESS_TOKEN>";
-    const map = new maplibregl.Map({
-      container: "map",
-      style: `https://api.jawg.io/styles/jawg-terrain.json?access-token=${accessToken}`,
-      zoom: 2,
-      center: [2.3210938, 48.7965913],
-      hash: true
-    }).addControl(new maplibregl.NavigationControl(), "top-right");
-    // This plugin is used for right to left languages
-    maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      const map = new maplibregl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/jawg-terrain.json?access-token=${accessToken}`,
+        zoom: 2,
+        center: [2.3210938, 48.7965913],
+        hash: true,
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-    map.on("load", () => {
-      // Add the tree cluster image
-      map.loadImage("https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree-cluster.png", (error, image) => {
-        if (error) throw error;
-        map.addImage("tree-cluster", image);
-      });
-      // Add the simple tree image
-      map.loadImage("https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree.png", (error, image) => {
-        if (error) throw error;
-        map.addImage("tree", image);
-      });
+      map.on("load", () => {
+        // Add the tree cluster image
+        map.loadImage(
+          "https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree-cluster.png",
+          (error, image) => {
+            if (error) throw error;
+            map.addImage("tree-cluster", image);
+          },
+        );
+        // Add the simple tree image
+        map.loadImage("https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree.png", (error, image) => {
+          if (error) throw error;
+          map.addImage("tree", image);
+        });
 
-      // Add a new source from our GeoJSON data and set the "cluster" option to true.
-      // MapLibre will add the "point_count" property to your source data
-      map.addSource("trees", {
-        type: "geojson",
-        data: "https://media.jawg.io/trees.geojson",
-        cluster: true,
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-      });
+        // Add a new source from our GeoJSON data and set the "cluster" option to true.
+        // MapLibre will add the "point_count" property to your source data
+        map.addSource("trees", {
+          type: "geojson",
+          data: "https://media.jawg.io/trees.geojson",
+          cluster: true,
+          clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
+        });
 
-      // Display the tree type as a separate symbol layer.
-      // This layer is optional, to disable you can remove it completely
-      map.addLayer({
-        id: "tree-label",
-        type: "symbol",
-        source: "trees",
-        filter: ["!", ["has", "point_count"]],
-        layout: {
-          "text-field": ["get", "libellefrancais"],
-          "text-padding": 0,
-          "text-allow-overlap": false,
-          "text-size": 11,
-          "text-font": ["Roboto Regular", "Noto Regular"],
-          "text-offset": [0, 1.75],
-          "text-anchor": "top"
-        },
-        paint: {
-          "text-color": "#5C5C5C",
-          "text-halo-color": "#FFFFFF",
-          "text-halo-width": 1
-        }
-      });
+        // Display the tree type as a separate symbol layer.
+        // This layer is optional, to disable you can remove it completely
+        map.addLayer({
+          id: "tree-label",
+          type: "symbol",
+          source: "trees",
+          filter: ["!", ["has", "point_count"]],
+          layout: {
+            "text-field": ["get", "libellefrancais"],
+            "text-padding": 0,
+            "text-allow-overlap": false,
+            "text-size": 11,
+            "text-font": ["Roboto Regular", "Noto Regular"],
+            "text-offset": [0, 1.75],
+            "text-anchor": "top",
+          },
+          paint: {
+            "text-color": "#5C5C5C",
+            "text-halo-color": "#FFFFFF",
+            "text-halo-width": 1,
+          },
+        });
 
-      // Add a tree symbol as a symbol layer with icon.
-      map.addLayer({
-        id: "tree",
-        type: "symbol",
-        source: "trees",
-        layout: {
-          // If the feature has the property "point_count" it means it's a cluster then we use the image "tree-cluster"
-          // Otherwise we use the simple "tree" image.
-          "icon-image": [
-            "case",
-            ["has", "point_count"], "tree-cluster",
-            "tree",
-          ],
-          // Display the cluster point count if >= 2
-          "text-field": [
-            "step",
-            ["get", "point_count"],
-            "",
-            // If the point_count is < 99 then display as "99+"
-            2, [
+        // Add a tree symbol as a symbol layer with icon.
+        map.addLayer({
+          id: "tree",
+          type: "symbol",
+          source: "trees",
+          layout: {
+            // If the feature has the property "point_count" it means it's a cluster then we use the image "tree-cluster"
+            // Otherwise we use the simple "tree" image.
+            "icon-image": ["case", ["has", "point_count"], "tree-cluster", "tree"],
+            // Display the cluster point count if >= 2
+            "text-field": [
               "step",
               ["get", "point_count"],
-              ["get", "point_count"],
-              99, "99+"
-            ]
-          ],
-          "icon-padding": 0,
-          "text-padding": 0,
-          "text-overlap": "always",
-          "icon-overlap": "always",
-          "text-size": 12,
-          "text-font": ["Roboto Bold", "Noto Bold"],
-          "text-anchor": "center"
-        },
-        paint: {
-          "text-color": "#5C5C5C",
-          // Translate the text to fit in the center of the top right area
-          // Depending on your image, you might tune this value
-          "text-translate": [13, -14],
-          "text-translate-anchor": "viewport"
-        }
-      });
+              "",
+              // If the point_count is < 99 then display as "99+"
+              2,
+              ["step", ["get", "point_count"], ["get", "point_count"], 99, "99+"],
+            ],
+            "icon-padding": 0,
+            "text-padding": 0,
+            "text-overlap": "always",
+            "icon-overlap": "always",
+            "text-size": 12,
+            "text-font": ["Roboto Bold", "Noto Bold"],
+            "text-anchor": "center",
+          },
+          paint: {
+            "text-color": "#5C5C5C",
+            // Translate the text to fit in the center of the top right area
+            // Depending on your image, you might tune this value
+            "text-translate": [13, -14],
+            "text-translate-anchor": "viewport",
+          },
+        });
 
-      // On click on a cluster, zoom to the expansion zoom level
-      map.on("click", "tree", (e) => {
-        const feature = e.features[0];
-        var clusterId = feature.properties.cluster_id;
-        if (!clusterId) return;
-        map.getSource("trees").getClusterExpansionZoom(clusterId, (err, zoom) => {
-          if (err) return;
-          map.easeTo({
-            center: feature.geometry.coordinates,
-            zoom: zoom + 0.5
+        // On click on a cluster, zoom to the expansion zoom level
+        map.on("click", "tree", (e) => {
+          const feature = e.features[0];
+          var clusterId = feature.properties.cluster_id;
+          if (!clusterId) return;
+          map.getSource("trees").getClusterExpansionZoom(clusterId, (err, zoom) => {
+            if (err) return;
+            map.easeTo({
+              center: feature.geometry.coordinates,
+              zoom: zoom + 0.5,
+            });
           });
         });
-      });
 
-      map.on("mouseenter", "tree", () => {
-        map.getCanvas().style.cursor = "pointer";
+        map.on("mouseenter", "tree", () => {
+          map.getCanvas().style.cursor = "pointer";
+        });
+        map.on("mouseleave", "tree", () => {
+          map.getCanvas().style.cursor = "";
+        });
       });
-      map.on("mouseleave", "tree", () => {
-        map.getCanvas().style.cursor = "";
-      });
-
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

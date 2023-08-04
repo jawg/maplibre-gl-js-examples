@@ -1,61 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset=UTF-8>
-  <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-    #map {
-      min-height: 500px;
-      height: 100%;
-      width: 100%;
-    }
-    select {
-      z-index: 1;
-      position: absolute;
-      top: 5px;
-      left: 5px;
-      padding: 5px;
-      background: white;
-    }
-  </style>
-</head>
-<body>
-  <div id="map">
-    <select id="styles" class="dropdownSelect">
-      <option value="jawg-streets">jawg-streets</option>
-      <option value="jawg-sunny">jawg-sunny</option>
-      <option value="jawg-terrain">jawg-terrain</option>
-      <option value="jawg-dark">jawg-dark</option>
-      <option value="jawg-light">jawg-light</option>
-    </select>
-  </div>
-  <script>
-    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token! 
-    const accessToken = '<YOUR_ACCESS_TOKEN>';
-    const layerList = document.getElementById('styles');
-    const options = layerList.getElementsByTagName('option');
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: `https://api.jawg.io/styles/${options[0].value}.json?access-token=${accessToken}`,
-      zoom: 12,
-      center: [35.51, 33.88]
-    }).addControl(new maplibregl.NavigationControl(), 'top-right');
-    // This plugin is used for right to left languages
-    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+      select {
+        z-index: 1;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        padding: 5px;
+        background: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map">
+      <select id="styles" class="dropdownSelect">
+        <option value="jawg-streets">jawg-streets</option>
+        <option value="jawg-sunny">jawg-sunny</option>
+        <option value="jawg-terrain">jawg-terrain</option>
+        <option value="jawg-dark">jawg-dark</option>
+        <option value="jawg-light">jawg-light</option>
+      </select>
+    </div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      const layerList = document.getElementById("styles");
+      const options = layerList.getElementsByTagName("option");
+      const map = new maplibregl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/${options[0].value}.json?access-token=${accessToken}`,
+        zoom: 12,
+        center: [35.51, 33.88],
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-    map.on('load', function() {
-      document
-        .getElementById('styles')
-        .addEventListener('change', function(event) {
+      map.on("load", function () {
+        document.getElementById("styles").addEventListener("change", function (event) {
           const style = event.target.value;
           map.setStyle(`https://api.jawg.io/styles/${style}.json?access-token=${accessToken}`);
         });
-    });
-  </script>
-</body>
+      });
+    </script>
+  </body>
 </html>

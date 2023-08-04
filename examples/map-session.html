@@ -1,52 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset=UTF-8>
-  <link href='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css' rel='stylesheet' />
-  <script src='https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js'></script>
-  <script src="https://unpkg.com/@jawg/map-session@1.0.0-pre.0/dist/map-session.umd.js"></script>
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #map {
-      min-height: 500px;
-      height: 100%;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    // Get the MapSession class from window using the UMD module name
-    const MapSession = window.jawg_map_session;
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@jawg/map-session@1.0.0-pre.0/dist/map-session.umd.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Get the MapSession class from window using the UMD module name
+      const MapSession = window.jawg_map_session;
 
-    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
-    const accessToken = '<YOUR_ACCESS_TOKEN>';
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
 
-    // Create a new map session and generate a session token
-    // The MapLoad count will be incremented only on the first tile request
-    const session = new MapSession();
+      // Create a new map session and generate a session token
+      // The MapLoad count will be incremented only on the first tile request
+      const session = new MapSession();
 
-    const map = new maplibregl.Map({
-      container: 'map',
-      style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
-      zoom: 2,
-      center: [2.3210938, 48.7965913],
-      // Use transformRequest to authenticate the requests.
-      transformRequest: (url, resourceType) => {
-        return {
-          // Add the session token as query parameter
-          url: session.authenticateUrl(url, resourceType),
-        };
-      },
-    });
-    // This plugin is used for right to left languages
-    maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js');
-  </script>
-</body>
+      const map = new maplibregl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
+        zoom: 2,
+        center: [2.3210938, 48.7965913],
+        // Use transformRequest to authenticate the requests.
+        transformRequest: (url, resourceType) => {
+          return {
+            // Add the session token as query parameter
+            url: session.authenticateUrl(url, resourceType),
+          };
+        },
+      });
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+    </script>
+  </body>
 </html>

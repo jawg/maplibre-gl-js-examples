@@ -1,81 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset=UTF-8>
-  <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
-  <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
-  <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
-  <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    #map {
-      min-height: 500px;
-      height: 100%;
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <script>
-    // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
-    const accessToken = "<YOUR_ACCESS_TOKEN>";
-    const center = [6.2361704, 43.1362582];
-    const map = new maplibregl.Map({
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      const center = [6.2361704, 43.1362582];
+      const map = new maplibregl.Map({
         container: "map",
         style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
         zoom: 13,
         center: center,
-        hash: true
-      }).addControl(new maplibregl.NavigationControl(), "top-right")
-      .addControl(new maplibregl.ScaleControl());
-    // This plugin is used for right to left languages
-    maplibregl.setRTLTextPlugin(
-      "https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js"
-    );
+        hash: true,
+      })
+        .addControl(new maplibregl.NavigationControl(), "top-right")
+        .addControl(new maplibregl.ScaleControl());
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-    map.on("load", function() {
-      // Generate a polygon using turf.circle.
-      // See https://turfjs.org/docs/#circle
-      const radius = 1; // kilometer
-      var options = {
-        steps: 64,
-        units: 'kilometers'
-      };
-      var circle = turf.circle(center, radius, options);
+      map.on("load", function () {
+        // Generate a polygon using turf.circle.
+        // See https://turfjs.org/docs/#circle
+        const radius = 1; // kilometer
+        var options = {
+          steps: 64,
+          units: "kilometers",
+        };
+        var circle = turf.circle(center, radius, options);
 
-      // Add a fill layer with some transparency.
-      map.addLayer({
-        id: "location-radius",
-        type: "fill",
-        source: {
-          type: "geojson",
-          data: circle
-        },
-        paint: {
-          "fill-color": "#8CCFFF",
-          "fill-opacity": 0.5,
-        }
+        // Add a fill layer with some transparency.
+        map.addLayer({
+          id: "location-radius",
+          type: "fill",
+          source: {
+            type: "geojson",
+            data: circle,
+          },
+          paint: {
+            "fill-color": "#8CCFFF",
+            "fill-opacity": 0.5,
+          },
+        });
+
+        // Add a line layer to draw the circle outline
+        map.addLayer({
+          id: "location-radius-outline",
+          type: "line",
+          source: {
+            type: "geojson",
+            data: circle,
+          },
+          paint: {
+            "line-color": "#0094ff",
+            "line-width": 3,
+          },
+        });
       });
-
-      // Add a line layer to draw the circle outline
-      map.addLayer({
-        id: "location-radius-outline",
-        type: "line",
-        source: {
-          type: "geojson",
-          data: circle
-        },
-        paint: {
-          "line-color": "#0094ff",
-          "line-width": 3
-        }
-      });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
