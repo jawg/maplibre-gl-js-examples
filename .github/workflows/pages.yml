@@ -35,9 +35,9 @@ jobs:
       - name: Replace GIS access-token
         run: find . -type f -exec sed -i "s/<YOUR_GIS_ACCESS_TOKEN>/${{ secrets.JAWG_MAPS_EXAMPLES_ACCESS_TOKEN }}/" {} \;
       - name: Replace simple map ID
-        run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_SIMPLE_MAP_MAP_ID }}/" examples/gis-simple-map.html
+        run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_SIMPLE_MAP_MAP_ID }}/" examples/gis/gis-simple-map.html
       - name: Replace category filter map ID
-        run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_CATEGORY_FILTER_MAP_ID }}/" examples/category-filter.html
+        run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_CATEGORY_FILTER_MAP_ID }}/" examples/gis/category-filter.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
