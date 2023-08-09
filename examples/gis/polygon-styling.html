@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      #map-container {
+        height: 100%;
+        position: relative;
+      }
+
+      #map {
+        min-height: 500px;
+        height: 100%;
+      }
+
+      #legend {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        pointer-events: none;
+      }
+
+      #legend svg {
+        height: 300px;
+        margin-left: 12px;
+        pointer-events: all;
+      }
+
+      .maplibregl-popup .maplibregl-popup-content {
+        background: none;
+        border: none;
+        box-shadow: none;
+      }
+
+      .maplibregl-popup .maplibregl-popup-tip {
+        border: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map-container">
+      <div id="map"></div>
+      <div id="legend">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 235">
+          <style>
+            text {
+              fill: #444;
+            }
+            g path {
+              stroke: #444;
+            }
+          </style>
+          <path fill="#ffc" d="M0 50h20v20H0z" />
+          <path fill="#ffeda0" d="M0 70h20v20H0z" />
+          <path fill="#fed976" d="M0 90h20v20H0z" />
+          <path fill="#feb24c" d="M0 110h20v20H0z" />
+          <path fill="#fd8d3c" d="M0 130h20v20H0z" />
+          <path fill="#fc4e2a" d="M0 150h20v20H0z" />
+          <path fill="#e31a1c" d="M0 170h20v20H0z" />
+          <path fill="#bd0026" d="M0 190h20v20H0z" />
+          <path fill="#800026" d="M0 210h20v20H0z" />
+          <g fill="none" font-size="10" font-family="sans-serif">
+            <path d="M31 50.5h-5.5V230H31M25 70.451h6" />
+            <text x="9" dy=".32em" transform="translate(25 70.951)">1,600</text>
+            <path d="M25 98.757h6" />
+            <text x="9" dy=".32em" transform="translate(25 98.757)">1,800</text>
+            <path d="M25 126.562h6" />
+            <text x="9" dy=".32em" transform="translate(25 126.562)">2,000</text>
+            <path d="M25 154.368h6" />
+            <text x="9" dy=".32em" transform="translate(25 154.368)">2,200</text>
+            <path d="M25 182.174h6" />
+            <text x="9" dy=".32em" transform="translate(25 182.174)">2,400</text>
+            <path d="M25 209.98h6" />
+            <text x="9" dy=".32em" transform="translate(25 209.98)">2,600</text>
+          </g>
+          <text transform="translate(0 40)">h/year</text>
+        </svg>
+      </div>
+    </div>
+    <script>
+      (async () => {
+        // Don't forget to replace <YOUR_GIS_ACCESS_TOKEN> by your real access token!
+        const accessToken = "<YOUR_GIS_ACCESS_TOKEN>";
+        // Don't forget to replace <YOUR_GIS_MAP_ID> by your real map id!
+        const mapId = "<YOUR_GIS_MAP_ID>";
+        const map = new maplibregl.Map({
+          container: "map",
+          style: `https://api.jawg.io/gis/maps/${mapId}/versions/latest/style?access-token=${accessToken}`,
+          zoom: 5,
+          center: [2.35, 47.45],
+        }).addControl(new maplibregl.NavigationControl(), "top-right");
+        // This plugin is used for right to left languages
+        maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+
+        const SUNSHINE_COLORS = [
+          "#ffc",
+          1600,
+          "#ffeda0",
+          1750,
+          "#fed976",
+          1900,
+          "#feb24c",
+          2050,
+          "#fd8d3c",
+          2200,
+          "#fc4e2a",
+          2350,
+          "#e31a1c",
+          2500,
+          "#bd0026",
+          2650,
+          "#800026",
+        ];
+
+        const getColor = (sunshine) =>
+          SUNSHINE_COLORS.reduce((acc, elt, idx) => (idx % 2 && sunshine > elt && SUNSHINE_COLORS[idx + 1]) || acc);
+
+        const popup = new maplibregl.Popup({ closeButton: false, closeOnMove: true, anchor: "bottom" });
+
+        map.once("load", (e) => {
+          let color = ["step", ["get", "sunshine"], ...SUNSHINE_COLORS];
+
+          map.addLayer({
+            id: "sunshine",
+            type: "fill",
+            source: "composite",
+            "source-layer": "sunshine-polygon",
+            paint: {
+              "fill-opacity": 0.75,
+              "fill-color": color,
+            },
+          });
+
+          map.addLayer({
+            id: "sunshine-line",
+            type: "line",
+            source: "composite",
+            "source-layer": "sunshine-polygon",
+            paint: {
+              "line-color": "#a1a1a1",
+              "line-opacity": 1,
+              "line-width": 0.5,
+            },
+          });
+
+          map.addLayer({
+            id: "department-label",
+            type: "symbol",
+            source: "composite",
+            "source-layer": "sunshine-label",
+            layout: {
+              "text-field": ["get", "nom"],
+              "text-size": ["interpolate", ["linear"], ["zoom"], 5, 10, 14, 26],
+              "text-font": ["Roboto Bold", "Noto Bold"],
+            },
+            paint: {
+              "text-color": "#ffffff",
+              "text-halo-width": 1,
+              "text-halo-color": "#fd8d3c",
+            },
+          });
+
+          map.on("mousemove", "sunshine", (e) => {
+            const features = map.queryRenderedFeatures(e.point, { layers: ["sunshine"] });
+            if (features.length === 0) return popup.remove();
+            const { sunshine, nom } = features[0].properties;
+
+            popup
+              .trackPointer()
+              .setHTML(
+                `<svg viewBox="0 0 320 50" height="75"
+  style="position: absolute; bottom: -6px; left: 2px;">
+  <defs>
+    <filter x="0" y="0" width="1.05" height="1.05" id="solid">
+      <feFlood flood-color="hsla(0,0%,100%,.75)" result="bg" />
+      <feMerge>
+        <feMergeNode in="bg" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <path d="m6 42 L20 20h25" stroke="#8F92CC" stroke-width="2px" fill="none" />
+  <circle cx="5" cy="45" r="4" stroke="#8F92CC" fill="${getColor(sunshine)}" stroke-width="2" />
+  <g filter="url(#solid)">
+    <path d="m45 25" stroke="none" fill="none" />
+    <text x="50" y="15" fill="#473C6E" font-size="14px">${nom}</text>
+    <text x="50" y="15" dy="14" fill="#525475" font-size="10px">${sunshine} h/year</text>
+  </g>
+</svg>`,
+              )
+              .addTo(map);
+          });
+
+          map.on("mouseleave", "sunshine", (e) => {
+            popup.remove();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
