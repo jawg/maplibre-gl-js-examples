@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        color: #004b78;
+      }
+
+      #map-container {
+        height: 100%;
+        position: relative;
+      }
+
+      #map {
+        min-height: 500px;
+        height: 100%;
+      }
+
+      span.circle {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+        border: solid #fff;
+      }
+
+      .maplibregl-popup-close-button {
+        padding: 5px 10px;
+        font-size: 1.5em;
+      }
+
+      .maplibregl-popup-content {
+        padding: 15px;
+        background: rgba(250, 250, 250, 0.9);
+        border-radius: 5px;
+      }
+
+      .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+      .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip,
+      .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip {
+        border-top-color: rgba(250, 250, 250, 0.9);
+      }
+
+      .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+      .maplibregl-popup-anchor-top-right .maplibregl-popup-tip,
+      .maplibregl-popup-anchor-top-left .maplibregl-popup-tip {
+        border-bottom-color: rgba(250, 250, 250, 0.9);
+      }
+
+      .measure {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
+    <script>
+      (async () => {
+        // Don't forget to replace <YOUR_GIS_ACCESS_TOKEN> by your real access token!
+        const accessToken = "<YOUR_GIS_ACCESS_TOKEN>";
+        // Don't forget to replace <YOUR_GIS_MAP_ID> by your real map id!
+        const mapId = "<YOUR_GIS_MAP_ID>";
+        const map = new maplibregl.Map({
+          container: "map",
+          style: `https://api.jawg.io/gis/maps/${mapId}/versions/latest/style?access-token=${accessToken}`,
+          zoom: 5,
+          hash: true,
+          center: [2.35, 47.45],
+        }).addControl(new maplibregl.NavigationControl(), "top-right");
+        // This plugin is used for right to left languages
+        maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+
+        const COLORS = ["#CEC7FF", "#A497FD", "#8F81EE", "#7867EB", "#6A5CD8", "#584DAE", "#241050"];
+
+        const buildHeader = ({ threshold, country, unit, value, parameter, location, city, source }) => {
+          let html = "";
+          if (country && city) html += `<h1>${city}, ${country}</h1>`;
+          if (country && !city) html += `<h1>${country}</h1>`;
+          if (location) html += `<h2>${location}</h2>`;
+          if (source) html += `<h3>Source: ${source}</h3>`;
+          return html;
+        };
+
+        const buildMeasures = ({ threshold, unit, value, parameter }) =>
+          `<div class="measure"><span class="circle" style="background-color: ${COLORS[threshold]}"></span>${parameter} : ${value} ${unit}</div>`;
+
+        const popupMove = new maplibregl.Popup({ closeButton: false, closeOnMove: true });
+        const popupStay = new maplibregl.Popup({ closeButton: true, closeOnMove: false });
+
+        map.once("load", (e) => {
+          map.setLayoutProperty("aq-pois", "symbol-sort-key", ["to-number", ["get", "threshold"]]);
+
+          const onMouseEvent = (popup) => (e) => {
+            const features = map.queryRenderedFeatures(e.point, { layers: ["aq-pois"] });
+            if (features.length === 0) return popup.remove();
+            const header = buildHeader(features[0].properties);
+            let measures = features
+              .sort(({ properties: a }, { properties: b }) => b.threshold - a.threshold)
+              .map(({ properties }) => buildMeasures(properties));
+
+            popup
+              .setHTML(
+                `${header}
+                <hr>
+                <b>Measures</b>: ${measures.join("")}`,
+              )
+              .setLngLat(e.lngLat)
+              .addTo(map);
+          };
+
+          map.on("mousemove", "aq-pois", onMouseEvent(popupMove));
+          map.on("click", onMouseEvent(popupStay));
+
+          map.on("click", (e) => {
+            const features = map.queryRenderedFeatures(e.point, { layers: ["aq-clusters-circle"] });
+            if (features.length === 0) return;
+            map.flyTo({ center: features[0].geometry.coordinates, zoom: map.getZoom() + 2 });
+          });
+
+          map.on("mouseleave", "aq-pois", (e) => {
+            popupMove.remove();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

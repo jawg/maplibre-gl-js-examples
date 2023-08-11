@@ -40,6 +40,8 @@ jobs:
         run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_CATEGORY_FILTER_MAP_ID }}/" examples/gis/category-filter.html
       - name: Replace category filter map ID
         run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_POLYGON_STYLING_MAP_ID }}/" examples/gis/polygon-styling.html
+      - name: Replace cluster air quality map ID
+        run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_CLUSTER_AQ_MAP_ID }}/" examples/gis/cluster-air-quality.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
