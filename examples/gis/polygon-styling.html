@@ -29,13 +29,13 @@
         height: 100%;
         width: 100%;
         display: flex;
-        align-items: center;
         pointer-events: none;
       }
 
       #legend svg {
         height: 300px;
         margin-left: 12px;
+        margin-top: 12px;
         pointer-events: all;
       }
 
@@ -55,7 +55,7 @@
     <div id="map-container">
       <div id="map"></div>
       <div id="legend">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 65 235">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 25 65 235">
           <style>
             text {
               fill: #444;
@@ -101,7 +101,7 @@
           container: "map",
           style: `https://api.jawg.io/gis/maps/${mapId}/versions/latest/style?access-token=${accessToken}`,
           zoom: 5,
-          center: [2.35, 47.45],
+          center: [2.35, 47],
         }).addControl(new maplibregl.NavigationControl(), "top-right");
         // This plugin is used for right to left languages
         maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
