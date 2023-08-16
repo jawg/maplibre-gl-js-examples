@@ -133,6 +133,11 @@
           map.on("mouseleave", "aq-pois", (e) => {
             popupMove.remove();
           });
+
+          ["aq-clusters-circle", "aq-pois"].forEach((layer) => {
+            map.on("mouseenter", layer, () => (map.getCanvas().style.cursor = "pointer"));
+            map.on("mouseleave", layer, () => (map.getCanvas().style.cursor = "grab"));
+          });
         });
       })();
     </script>
