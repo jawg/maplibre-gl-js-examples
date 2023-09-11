@@ -99,6 +99,9 @@
 
         const popupMove = new maplibregl.Popup({ closeButton: false, closeOnMove: true });
         const popupStay = new maplibregl.Popup({ closeButton: true, closeOnMove: false });
+        let selectedPoi;
+
+        popupStay.on("close", () => (selectedPoi = undefined));
 
         map.once("load", (e) => {
           map.setLayoutProperty("aq-pois", "symbol-sort-key", ["to-number", ["get", "threshold"]]);
@@ -119,6 +122,9 @@
               )
               .setLngLat(e.lngLat)
               .addTo(map);
+            if (popup === popupStay) {
+              selectedPoi = header;
+            }
           };
 
           map.on("mousemove", "aq-pois", onMouseEvent(popupMove));
