@@ -114,14 +114,22 @@
               .sort(({ properties: a }, { properties: b }) => b.threshold - a.threshold)
               .map(({ properties }) => buildMeasures(properties));
 
-            popup
-              .setHTML(
-                `${header}
+            const openPopup = () =>
+              popup
+                .setHTML(
+                  `${header}
                 <hr>
                 <b>Measures</b>: ${measures.join("")}`,
-              )
-              .setLngLat(e.lngLat)
-              .addTo(map);
+                )
+                .setLngLat(e.lngLat)
+                .addTo(map);
+
+            if (popup === popupStay && popup.isOpen()) {
+              setTimeout(openPopup, 50);
+            } else if (popup === popupStay || selectedPoi !== header) {
+              openPopup();
+            }
+
             if (popup === popupStay) {
               selectedPoi = header;
             }
