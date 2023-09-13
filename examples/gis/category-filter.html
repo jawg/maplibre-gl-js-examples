@@ -74,7 +74,11 @@
           style: `https://api.jawg.io/gis/maps/${mapId}/versions/latest/style?access-token=${accessToken}`,
           zoom: 12,
           center: [2.35071554, 48.85826376],
-        }).addControl(new maplibregl.NavigationControl(), "top-right");
+        });
+        const useNavigationControl = new URLSearchParams(window.location.search).get("navigation-control");
+        if (useNavigationControl !== "false") {
+          map.addControl(new maplibregl.NavigationControl(), "top-right");
+        }
         // This plugin is used for right to left languages
         maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
