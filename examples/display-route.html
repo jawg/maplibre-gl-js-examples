@@ -2,12 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
+      html,
       body {
         margin: 0;
         padding: 0;
+        height: 100%;
       }
       #map {
         min-height: 500px;
@@ -31,7 +33,7 @@
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-      map.on("load", function () {
+      map.on("load", async () => {
         // Paris [lng, lat]
         const start = [2.3522, 48.8566];
         // Marseille [lng, lat]
@@ -41,89 +43,87 @@
 
         // Get the fastest route.
         // See https://www.jawg.io/docs/apidocs/routing/osrm for more information about the request parameters and response format.
-        fetch(
+        const response = await fetch(
           `https://api.jawg.io/routing/route/v1/car/${coordinates}?alternatives=false&geometries=geojson&overview=full&access-token=${accessToken}`,
-        )
-          .then((response) => response.json())
-          .then((response) => {
-            const route = response.routes[0];
+        ).then((response) => response.json());
 
-            // Add the route geometry to the map
-            map.addSource("route", {
+        const route = response.routes[0];
+
+        // Add the route geometry to the map
+        map.addSource("route", {
+          type: "geojson",
+          data: route.geometry,
+        });
+
+        // Set the first label layer name as we want to insert our layers just before the labels.
+        // This is style specific, here we use jawg-streets which has a "road-shield" layer.
+        // For other styles this is "housenum-label".
+        // If you are using a custom style you can check the layer name in the style JSON: https://api.jawg.io/styles/{styleId}.json?access-token=${accessToken}
+        const firstLabelLayerId = "road-shield";
+
+        map.addLayer(
+          {
+            id: "route-line",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-cap": "round",
+              "line-join": "round",
+            },
+            paint: {
+              "line-color": "#13BBFA",
+              "line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 3, 18, 8],
+            },
+            // Add the layer before the first label layer e.g. "road-shield"
+          },
+          firstLabelLayerId,
+        );
+
+        // (optional) Add an outline to the route for better rendering
+        map.addLayer(
+          {
+            id: "route-case",
+            type: "line",
+            source: "route",
+            layout: {
+              "line-cap": "round",
+              "line-join": "round",
+            },
+            paint: {
+              "line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 2, 18, 3],
+              "line-color": "#4D93E3",
+              "line-gap-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 3, 18, 8],
+            },
+            // Add the layer before the first label layer e.g. "road-shield"
+          },
+          firstLabelLayerId,
+        );
+
+        // Show the starting and the ending points as circles
+        map.addLayer(
+          {
+            id: "route-start",
+            type: "circle",
+            source: {
               type: "geojson",
-              data: route.geometry,
-            });
-
-            // Set the first label layer name as we want to insert our layers just before the labels.
-            // This is style specific, here we use jawg-streets which has a "road-shield" layer.
-            // For other styles this is "housenum-label".
-            // If you are using a custom style you can check the layer name in the style JSON: https://api.jawg.io/styles/{styleId}.json?access-token=${accessToken}
-            const firstLabelLayerId = "road-shield";
-
-            map.addLayer(
-              {
-                id: "route-line",
-                type: "line",
-                source: "route",
-                layout: {
-                  "line-cap": "round",
-                  "line-join": "round",
-                },
-                paint: {
-                  "line-color": "#13BBFA",
-                  "line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 3, 18, 8],
-                },
-                // Add the layer before the first label layer e.g. "road-shield"
+              data: {
+                type: "MultiPoint",
+                coordinates: [
+                  route.geometry.coordinates[0],
+                  route.geometry.coordinates[route.geometry.coordinates.length - 1],
+                ],
               },
-              firstLabelLayerId,
-            );
-
-            // (optional) Add an outline to the route for better rendering
-            map.addLayer(
-              {
-                id: "route-case",
-                type: "line",
-                source: "route",
-                layout: {
-                  "line-cap": "round",
-                  "line-join": "round",
-                },
-                paint: {
-                  "line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 2, 18, 3],
-                  "line-color": "#4D93E3",
-                  "line-gap-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 3, 18, 8],
-                },
-                // Add the layer before the first label layer e.g. "road-shield"
-              },
-              firstLabelLayerId,
-            );
-
-            // Show the starting and the ending points as circles
-            map.addLayer(
-              {
-                id: "route-start",
-                type: "circle",
-                source: {
-                  type: "geojson",
-                  data: {
-                    type: "MultiPoint",
-                    coordinates: [
-                      route.geometry.coordinates[0],
-                      route.geometry.coordinates[route.geometry.coordinates.length - 1],
-                    ],
-                  },
-                },
-                paint: {
-                  "circle-radius": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 6, 18, 15],
-                  "circle-color": "#13BBFA",
-                  "circle-stroke-width": 3,
-                  "circle-stroke-color": "#4D93E3",
-                },
-                // Add the layer before the first label layer e.g. "road-shield"
-              },
-              firstLabelLayerId,
-            );
-          });
+            },
+            paint: {
+              "circle-radius": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 6, 18, 15],
+              "circle-color": "#13BBFA",
+              "circle-stroke-width": 3,
+              "circle-stroke-color": "#4D93E3",
+            },
+            // Add the layer before the first label layer e.g. "road-shield"
+          },
+          firstLabelLayerId,
+        );
       });
     </script>
   </body>

@@ -2,12 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
+      html,
       body {
         margin: 0;
         padding: 0;
+        height: 100%;
       }
       #map {
         min-height: 500px;
@@ -39,9 +41,12 @@
     <script>
       // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
       const accessToken = "<YOUR_ACCESS_TOKEN>";
+
+      const styleId = "jawg-lagoon";
+
       const map = new maplibregl.Map({
         container: "map",
-        style: `https://api.jawg.io/styles/jawg-dark.json?lang=en&access-token=${accessToken}`,
+        style: `https://api.jawg.io/styles/${styleId}.json?lang=en&access-token=${accessToken}`,
         zoom: 2,
         center: [2.3210938, 48.7965913],
         hash: true,
@@ -49,10 +54,10 @@
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-      map.on("load", function () {
+      map.on("load", () => {
         document.getElementById("languages").addEventListener("change", function (event) {
           var language = event.target.value;
-          map.setStyle(`https://api.jawg.io/styles/jawg-dark.json?lang=${language}&access-token=${accessToken}`);
+          map.setStyle(`https://api.jawg.io/styles/${styleId}.json?lang=${language}&access-token=${accessToken}`);
         });
       });
     </script>

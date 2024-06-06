@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
       html,
       body {
@@ -44,7 +44,7 @@
       new maplibregl.Marker().setLngLat([2.349902, 48.852966]).addTo(map);
 
       // Add a Marker with a custom icon.
-      // Check all the marker options here: https://maplibre.org/maplibre-gl-js/docs/API/types/maplibregl.MarkerOptions/
+      // Check all the marker options here: https://maplibre.org/maplibre-gl-js/docs/API/type-aliases/MarkerOptions/
       const el = document.createElement("div");
       el.addEventListener("click", () => {
         window.alert("Eiffel Tower");

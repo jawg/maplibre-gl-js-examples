@@ -2,8 +2,8 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
       html,
       body {
@@ -25,7 +25,7 @@
       const accessToken = "<YOUR_ACCESS_TOKEN>";
       const map = new maplibregl.Map({
         container: "map",
-        style: `https://api.jawg.io/styles/jawg-terrain.json?access-token=${accessToken}`,
+        style: `https://api.jawg.io/styles/jawg-lagoon.json?access-token=${accessToken}`,
         zoom: 2,
         center: [2.3210938, 48.7965913],
         hash: true,
@@ -33,20 +33,16 @@
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-      map.on("load", () => {
+      map.on("load", async () => {
         // Add the tree cluster image
-        map.loadImage(
+        const clusterImage = await map.loadImage(
           "https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree-cluster.png",
-          (error, image) => {
-            if (error) throw error;
-            map.addImage("tree-cluster", image);
-          },
         );
+        map.addImage("tree-cluster", clusterImage.data);
+
         // Add the simple tree image
-        map.loadImage("https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree.png", (error, image) => {
-          if (error) throw error;
-          map.addImage("tree", image);
-        });
+        const treeImage = await map.loadImage("https://jawg.github.io/maplibre-gl-js-examples/icons/cluster/tree.png");
+        map.addImage("tree", treeImage.data);
 
         // Add a new source from our GeoJSON data and set the "cluster" option to true.
         // MapLibre will add the "point_count" property to your source data
@@ -116,16 +112,14 @@
         });
 
         // On click on a cluster, zoom to the expansion zoom level
-        map.on("click", "tree", (e) => {
+        map.on("click", "tree", async (e) => {
           const feature = e.features[0];
           var clusterId = feature.properties.cluster_id;
           if (!clusterId) return;
-          map.getSource("trees").getClusterExpansionZoom(clusterId, (err, zoom) => {
-            if (err) return;
-            map.easeTo({
-              center: feature.geometry.coordinates,
-              zoom: zoom + 0.5,
-            });
+          const zoom = await map.getSource("trees").getClusterExpansionZoom(clusterId);
+          map.easeTo({
+            center: feature.geometry.coordinates,
+            zoom: zoom + 0.5,
           });
         });
 

@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
       - name: Replace GIS access-token
         run: find . -type f -exec sed -i "s/<YOUR_GIS_ACCESS_TOKEN>/${{ secrets.JAWG_MAPS_EXAMPLES_ACCESS_TOKEN }}/" {} \;
       - name: Replace simple map ID
@@ -43,10 +43,10 @@ jobs:
       - name: Replace cluster air quality map ID
         run: sed -i "s/<YOUR_GIS_MAP_ID>/${{ secrets.GIS_CLUSTER_AQ_MAP_ID }}/" examples/gis/cluster-air-quality.html
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@main
+        uses: actions/deploy-pages@v4

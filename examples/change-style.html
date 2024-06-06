@@ -2,12 +2,14 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
+      html,
       body {
         margin: 0;
         padding: 0;
+        height: 100%;
       }
       #map {
         min-height: 500px;
@@ -28,6 +30,7 @@
     <div id="map">
       <select id="styles" class="dropdownSelect">
         <option value="jawg-streets">jawg-streets</option>
+        <option value="jawg-lagoon">jawg-lagoon</option>
         <option value="jawg-sunny">jawg-sunny</option>
         <option value="jawg-terrain">jawg-terrain</option>
         <option value="jawg-dark">jawg-dark</option>
@@ -48,10 +51,10 @@
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-      map.on("load", function () {
+      map.on("load", () => {
         document.getElementById("styles").addEventListener("change", function (event) {
-          const style = event.target.value;
-          map.setStyle(`https://api.jawg.io/styles/${style}.json?access-token=${accessToken}`);
+          const styleId = event.target.value;
+          map.setStyle(`https://api.jawg.io/styles/${styleId}.json?access-token=${accessToken}`);
         });
       });
     </script>

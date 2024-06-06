@@ -2,12 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <link href="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.css" rel="stylesheet" />
-    <script src="https://unpkg.com/maplibre-gl@3.3.0/dist/maplibre-gl.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
     <style>
+      html,
       body {
         margin: 0;
         padding: 0;
+        height: 100%;
       }
       #map {
         min-height: 500px;
@@ -24,33 +27,32 @@
       const map = new maplibregl.Map({
         container: "map",
         style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
-        zoom: 10,
+        zoom: 11,
         center: [2.3488, 48.8534],
         hash: true,
       }).addControl(new maplibregl.NavigationControl(), "top-right");
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
-      map.on("load", function () {
+      map.on("load", async () => {
         // Add an image to use as a custom marker
-        map.loadImage("https://media.jawg.io/add-your-data/shop.png", function (error, image) {
-          if (error) throw error;
-          // Add image to map
-          map.addImage("custom-marker", image);
+        const image = await map.loadImage("https://media.jawg.io/add-your-data/shop.png");
+        // Add image to map
+        map.addImage("custom-marker", image.data);
 
-          // Add layer to map, using your geojson as source
-          map.addLayer({
-            id: "shops",
-            type: "symbol",
-            source: {
-              type: "geojson",
-              data: "https://media.jawg.io/add-your-data/marketplaces.geojson",
-            },
-            layout: {
-              "icon-image": "custom-marker",
-              "icon-anchor": "bottom",
-            },
-          });
+        // Add layer to map, using your geojson as source
+        map.addLayer({
+          id: "shops",
+          type: "symbol",
+          source: {
+            type: "geojson",
+            data: "https://media.jawg.io/add-your-data/marketplaces.geojson",
+          },
+          layout: {
+            "icon-image": "custom-marker",
+            "icon-anchor": "bottom",
+            "icon-overlap": "always",
+          },
         });
       });
     </script>
