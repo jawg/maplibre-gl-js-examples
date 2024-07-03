@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
+      const accessToken = "<YOUR_ACCESS_TOKEN>";
+      const map = new maplibregl.Map({
+        container: "map",
+        style: `https://api.jawg.io/styles/jawg-satellite-streets.json?access-token=${accessToken}`,
+        zoom: 12.66,
+        pitch: 75,
+        bearing: 137.6,
+        center: [55.46928, -20.91992],
+        hash: false,
+        maxBounds: [54.277954, -21.850027, 56.914673, -20.463043],
+        maxZoom: 18,
+        maxPitch: 85,
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
+      // This plugin is used for right to left languages
+      maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+
+      let demSource = {
+        type: "raster-dem",
+        maxzoom: 10,
+        tileSize: 512,
+        tiles: [`https://tile.jawg.io/jawg-dem/{z}/{x}/{y}.png?access-token=${accessToken}`],
+      };
+
+      map.once("load", () => {
+        map.addSource("dem", demSource);
+        map.setTerrain({ source: "dem", exaggeration: 1.5 });
+        map.setSky({
+          "sky-color": "#199EF3",
+          "sky-horizon-blend": 0.5,
+          "horizon-color": "#ffffff",
+          "horizon-fog-blend": 0.9,
+          "fog-color": "#0000ff",
+          "fog-ground-blend": 0.95,
+        });
+      });
+    </script>
+  </body>
+</html>
