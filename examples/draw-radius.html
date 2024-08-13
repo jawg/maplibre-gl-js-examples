@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link href="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@4.5.0/dist/maplibre-gl.js"></script>
-    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
     <style>
       html,
       body {
@@ -24,37 +24,38 @@
     <script>
       // Don't forget to replace <YOUR_ACCESS_TOKEN> by your real access token!
       const accessToken = "<YOUR_ACCESS_TOKEN>";
-      const center = [6.2361704, 43.1362582];
+      const radiusCenter = [2.3454, 48.8452];
       const map = new maplibregl.Map({
         container: "map",
-        style: `https://api.jawg.io/styles/jawg-sunny.json?access-token=${accessToken}`,
+        style: `https://api.jawg.io/styles/jawg-streets.json?access-token=${accessToken}`,
         zoom: 13,
-        center: center,
+        center: radiusCenter,
         hash: true,
-      })
-        .addControl(new maplibregl.NavigationControl(), "top-right")
-        .addControl(new maplibregl.ScaleControl());
+      }).addControl(new maplibregl.NavigationControl(), "top-right");
       // This plugin is used for right to left languages
       maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
 
       map.on("load", () => {
         // Generate a polygon using turf.circle.
-        // See https://turfjs.org/docs/#circle
+        // See https://turfjs.org/docs/api/circle
         const radius = 1; // kilometer
-        var options = {
+        const options = {
           steps: 64,
           units: "kilometers",
         };
-        var circle = turf.circle(center, radius, options);
+        const circle = turf.circle(radiusCenter, radius, options);
 
-        // Add a fill layer with some transparency.
+        // Add the circle as a GeoJSON source
+        map.addSource("location-radius", {
+          type: "geojson",
+          data: circle,
+        });
+
+        // Add a fill layer with some transparency
         map.addLayer({
           id: "location-radius",
           type: "fill",
-          source: {
-            type: "geojson",
-            data: circle,
-          },
+          source: "location-radius",
           paint: {
             "fill-color": "#8CCFFF",
             "fill-opacity": 0.5,
@@ -65,10 +66,7 @@
         map.addLayer({
           id: "location-radius-outline",
           type: "line",
-          source: {
-            type: "geojson",
-            data: circle,
-          },
+          source: "location-radius",
           paint: {
             "line-color": "#0094ff",
             "line-width": 3,
