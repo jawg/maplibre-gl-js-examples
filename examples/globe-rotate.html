@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link href="https://unpkg.com/maplibre-gl@5.0.1/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@5.0.1/dist/maplibre-gl.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        min-height: 500px;
+        height: 100%;
+        width: 100%;
+        background: #233160;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      (async () => {
+        // Don't forget to replace <YOUR_ACCESS_TOKEN> by your own access token
+        const accessToken = "<YOUR_ACCESS_TOKEN>";
+
+        // Get the style then entend it with the globe projection
+        const style = await fetch(`https://api.jawg.io/styles/jawg-terrain.json?access-token=${accessToken}`)
+          .then((response) => response.json())
+          .then((style) => {
+            return {
+              ...style,
+              projection: {
+                type: "globe",
+              },
+            };
+          });
+
+        const map = new maplibregl.Map({
+          container: "map",
+          style: style,
+          zoom: 2,
+          center: [0, 0],
+          maxPitch: 85,
+          canvasContextAttributes: { antialias: true },
+          hash: false,
+        });
+        // This plugin is used for right to left languages
+        maplibregl.setRTLTextPlugin("https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.min.js");
+
+        let userInteract = false;
+
+        // Stop rotating at zoom level 5 and above
+        const maxRotationZoom = 5;
+        // Longitude offset of 4° west per second
+        const lngOffset = -4;
+
+        function startRotationLoop() {
+          // Do not rotate if the map zoom is too high
+          if (map.getZoom() > maxRotationZoom) return;
+          rotationStep();
+          // When the rotation step ends, a "moveend" event will be sent
+          map.on("moveend", rotationLoop);
+        }
+
+        function stopRotationLoop() {
+          // Remove the listener
+          map.off("moveend", rotationLoop);
+        }
+
+        function rotationLoop(e) {
+          // Ignore "moveend" events that don't come from the rotation animation
+          if (e.id !== "rotation") return;
+          // Stop the loop if the user is interacting with the map
+          if (userInteract) return;
+          rotationStep();
+        }
+
+        function rotationStep() {
+          const center = map.getCenter();
+          // Compute the destination point
+          const destination = { lng: center.lng + lngOffset, lat: center.lat };
+          // Pan the map over one second.
+          // When this animation is complete, it calls a "moveend" event
+          map.panTo(destination, { duration: 1000, easing: (n) => n }, { id: "rotation" });
+        }
+
+        // Stop the rotation on user interaction
+        ["dblclick", "mousedown", "touchstart"].forEach((event) => {
+          map.on(event, () => {
+            userInteract = true;
+            stopRotationLoop();
+          });
+        });
+
+        // Handle the special case of "zoomstart"
+        // We don't stop the rotation loop as multiple events are sent rapidely
+        map.on("zoomstart", (e) => {
+          userInteract = true;
+        });
+
+        map.on("mouseup", () => {
+          userInteract = false;
+        });
+
+        // Restart the rotation when the user stops interacting with the map
+        ["click", "moveend"].forEach((event) => {
+          map.on(event, (e) => {
+            // Ignore this event if it doesn't come from the user interaction
+            if (e.id === "rotation") return;
+            if (!userInteract) startRotationLoop();
+          });
+        });
+
+        // Start the rotation on page load
+        startRotationLoop();
+      })();
+    </script>
+  </body>
+</html>
